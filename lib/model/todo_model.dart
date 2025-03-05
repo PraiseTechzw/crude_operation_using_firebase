@@ -5,33 +5,49 @@ class Todo {
   String title;
   String description;
   bool isDone;
-  Timestamp? timestamp;
+  Timestamp timestamp;
 
   Todo({
     required this.id,
     required this.title,
     required this.description,
     this.isDone = false,
-    this.timestamp,
+    required this.timestamp,
   });
 
   factory Todo.fromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     return Todo(
       id: snapshot.id,
-      title: data['title'] ?? 'No Title',
-      description: data['description'] ?? 'No Description',
-      isDone: data['isDone'] ?? false,
-      timestamp: data['timestamp'] ?? Timestamp.now(),
+      title: snapshot['title'],
+      description: snapshot['description'],
+      isDone: snapshot['isDone'],
+      timestamp: snapshot['timestamp'],
+    );
+  }
+
+  Todo copyWith({
+    String? id,
+    String? title,
+    String? description,
+    bool? isDone,
+    Timestamp? timestamp,
+  }) {
+    return Todo(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isDone: isDone ?? this.isDone,
+      timestamp: timestamp ?? this.timestamp,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'title': title,
       'description': description,
       'isDone': isDone,
-      'timestamp': timestamp ?? FieldValue.serverTimestamp(),
+      'timestamp': timestamp,
     };
   }
 }
